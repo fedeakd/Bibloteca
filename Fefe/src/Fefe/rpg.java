@@ -6,9 +6,12 @@
 package Fefe;
 import java.awt.BorderLayout;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
+import javax.swing.JOptionPane;
 /**
  *
  * @author Usuario
@@ -94,6 +97,7 @@ ImageIcon imagenFondo = new ImageIcon(getClass().getResource("/imagen/racing3.jp
         jLabel1.setFont(new java.awt.Font("Year supply of fairy cakes", 1, 11)); // NOI18N
         jLabel1.setText("Eleji :");
 
+        racing.setBackground(new java.awt.Color(51, 102, 255));
         racing.setText("...");
         racing.setEnabled(false);
         racing.setFocusable(false);
@@ -124,6 +128,7 @@ ImageIcon imagenFondo = new ImageIcon(getClass().getResource("/imagen/racing3.jp
         ePerdidas.setForeground(new java.awt.Color(51, 255, 255));
         ePerdidas.setText("Perdidas");
 
+        versus.setBackground(new java.awt.Color(51, 255, 255));
         versus.setEnabled(false);
         versus.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -238,8 +243,8 @@ ImageIcon imagenFondo = new ImageIcon(getClass().getResource("/imagen/racing3.jp
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-    public String  radio  (){
-        try {
+    public String  radio  () throws ExceptionError{
+        
             if(buttonGroup1.isSelected(piedra.getModel())){
                 return "Piedra";
             }else if(buttonGroup1.isSelected(papel.getModel())){
@@ -247,32 +252,24 @@ ImageIcon imagenFondo = new ImageIcon(getClass().getResource("/imagen/racing3.jp
             }else if(buttonGroup1.isSelected(tijera.getModel())){
                 return "Tijera";
             }
-        } catch (Exception e) {
-            return "nada" + e;
-        }return "nada";
+       throw new ExceptionError();
+      
     }
     public  String maquina (){
         Random  random  = new Random ();
         String [] pc  = {"Piedra","Papel","Tijera"};
-        int   num = random.nextInt(3);
-        return pc[num];
+        return pc[random.nextInt(3)];
     }
-    public String  Total  (){
+    public String  Total  () throws ExceptionError{
+        try{
           this.radio = radio ();
           this.maquina = maquina ();
      if(radio == maquina ){
         compu.setText(maquina);
         empatadas+=1;
         return "Empate";
-    }else if((radio == "Tijera")&& (maquina == "Papel")){
-        compu.setText(maquina);
-        ganadas+=1;
-        return "Ganaste";
-    }else if ((radio == "Papel")&&(maquina == "Piedra")){
-        compu.setText(maquina);
-        ganadas+=1;
-        return "Ganaste";
-    }else if ((radio =="Piedra")&& (maquina == "Tijera")){
+    }else if(((radio == "Tijera")&& (maquina == "Papel"))||((radio == "Papel")&&(maquina == "Piedra"))
+            ||((radio =="Piedra")&& (maquina == "Tijera"))){
         compu.setText(maquina);
         ganadas+=1;
         return "Ganaste";
@@ -280,7 +277,10 @@ ImageIcon imagenFondo = new ImageIcon(getClass().getResource("/imagen/racing3.jp
       compu.setText(maquina);
       perdidas+=1;
       return "Perdiste";
-    
+        }
+        catch(ExceptionError e){
+          throw new ExceptionError();
+        }
     }
     private void papelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_papelActionPerformed
         // TODO add your handling code here:
@@ -291,7 +291,12 @@ ImageIcon imagenFondo = new ImageIcon(getClass().getResource("/imagen/racing3.jp
     }//GEN-LAST:event_racingActionPerformed
 
     private void aceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aceptarActionPerformed
-        racing.setText(Total());
+        try {
+            racing.setText(Total());
+        } catch (ExceptionError ex) {
+            Object error="estos es un error";
+            JOptionPane.showMessageDialog(null,"Error debes seleccionar una opcion","Error",JOptionPane.ERROR_MESSAGE);
+        }
         versus.setText(radio +" Vs "+maquina);
          eEmpates.setText("Empates:" + empatadas);
      eGanadas.setText("Ganadas:"+ ganadas);
